@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PaperZone.lk</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" />
+  <style>
+    body {
+      background-color: #ffffff;
+      text-align: center;
+      padding: 0;
+      margin: 0;
+    }
+
+    header.hero {
+      background-color: #c80000;
+      color: #ffffff;
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+
+    header.hero h1 {
+      margin: 0;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #ffffff !important;
+    }
+
+    header.hero p {
+      margin-top: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: #ffffffcc;
+    }
+
+    h2, h3 {
+      color: #2b2b2b;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    button, .stream-btn {
+      background-color: #c80000;
+      color: white;
+      border: none;
+      padding: 1rem;
+      font-weight: bold;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    .button-outline {
+      background-color: transparent;
+      border: 2px solid #c80000;
+      color: #c80000;
+    }
+
+    .active {
+      background-color: #c80000 !important;
+      color: #fff !important;
+      border: none !important;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .section-box {
+      padding: 2rem;
+      background-color: #fdf2f2;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    main.container {
+      padding-top: 2rem;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <h1>paperzone.lk</h1>
+    <p>Advanced Level Past Papers - Last 10 Years</p>
+  </header>
+
+  <main class="container">
+    <section class="fade-in">
+      <h3>Select Your Stream</h3>
+      <div class="button-grid" id="streamButtons">
+        <button class="stream-btn button-outline" onclick="selectStream(this, 'maths')">Mathematics</button>
+        <button class="stream-btn button-outline" onclick="selectStream(this, 'science')">Science</button>
+        <button class="stream-btn button-outline" onclick="selectStream(this, 'commerce')">Commerce</button>
+        <button class="stream-btn button-outline" onclick="selectStream(this, 'arts')">Arts</button>
+        <button class="stream-btn button-outline" onclick="selectStream(this, 'tech')">Technology</button>
+      </div>
+    </section>
+
+    <section id="subjectSection" class="hidden fade-in">
+      <h3>Select Subject</h3>
+      <div id="subjectButtons" class="button-grid"></div>
+    </section>
+
+    <section id="yearSection" class="hidden section-box fade-in">
+      <h3 id="yearTitle">Past Papers</h3>
+      <div class="button-grid" id="yearButtons"></div>
+      <p>Click on any year to download the past paper</p>
+    </section>
+  </main>
+
+  <footer class="container fade-in">
+    <small><a href="#">Privacy</a> • <a href="#">Terms</a></small>
+  </footer>
+
+  <script>
+    const subjects = {
+      maths: ["Pure Mathematics", "Applied Mathematics", "Chemistry", "Physics"],
+      science: ["Biology", "Chemistry", "Physics", "Agriculture"],
+      commerce: ["Accounting", "Business Studies", "Economics", "ICT"],
+      arts: ["Japanese", "Korean", "Geography", "Logic", "Political Science", "History", "Sinhala Literature", "French", "Economics"],
+      tech: ["ICT", "ET", "SFT", "BST"]
+    };
+
+    const downloadLinks = {
+      science: {
+        biology: {
+          2024: "https://drive.google.com/uc?export=download&id=19SbDHHMUpbknTjWgaKYkGPChy5XR9nm7",
+          2023: "https://drive.google.com/uc?export=download&id=18ZA9D_nWSx1C5aoEq4dhpFV3Llo0if9S",
+          2022: "https://drive.google.com/uc?export=download&id=18XWH0kgGdBRFONRC1L0DnJmgO8TzzWnF",
+          2021: "https://drive.google.com/uc?export=download&id=18TquJIOuEBIl5n6YEfE4z8TQohdnicve",
+          2020: "https://drive.google.com/uc?export=download&id=18Q86_YRVWlBcyrnkdckiwVEhady4ZXVA",
+          2019: "https://drive.google.com/uc?export=download&id=19C0HpC3jgpxaXdEqq22W1hfiNrvcMOIa",
+          2018: "https://drive.google.com/uc?export=download&id=196B3KNVjOW85Wwi0zANgV-peg7lpW0r8",
+          2017: "https://drive.google.com/uc?export=download&id=18xdT5O4fr8GuV3wJ2j2WorJ2TCb9well",
+          2016: "https://drive.google.com/uc?export=download&id=18b4UAzHyhtsPD7Ckn3o4PxVOLBZWbKeO",
+          2015: "https://drive.google.com/uc?export=download&id=18_-uIG5J3w-QdEnOWiwhBbIrmd49KLCX"
+        }
+      }
+    };
+
+    function selectStream(buttonEl, streamKey) {
+      document.getElementById("subjectSection").classList.remove("hidden");
+      document.getElementById("yearSection").classList.add("hidden");
+
+      document.querySelectorAll("#streamButtons button").forEach(btn => btn.classList.remove("active"));
+      buttonEl.classList.add("active");
+
+      const subjectButtons = document.getElementById("subjectButtons");
+      subjectButtons.innerHTML = "";
+
+      subjects[streamKey].forEach(subject => {
+        const btn = document.createElement("button");
+        btn.textContent = subject;
+        btn.className = "stream-btn button-outline";
+        btn.onclick = () => selectSubject(btn, streamKey, subject);
+        subjectButtons.appendChild(btn);
+      });
+    }
+
+    function selectSubject(buttonEl, streamKey, subjectName) {
+      document.getElementById("yearSection").classList.remove("hidden");
+      document.getElementById("yearTitle").textContent = `${subjectName} Past Papers`;
+
+      document.querySelectorAll("#subjectButtons button").forEach(btn => btn.classList.remove("active"));
+      buttonEl.classList.add("active");
+
+      const yearButtons = document.getElementById("yearButtons");
+      yearButtons.innerHTML = "";
+
+      for (let y = 2024; y >= 2015; y--) {
+        const btn = document.createElement("button");
+        btn.textContent = y;
+        btn.className = "button-outline";
+        btn.onclick = () => {
+          document.querySelectorAll("#yearButtons button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          downloadPaper(streamKey, subjectName, y);
+        };
+        yearButtons.appendChild(btn);
+      }
+    }
+
+    function downloadPaper(stream, subject, year) {
+      const subjectSlug = subject.toLowerCase().replace(/\s/g, "_");
+      const directLink = downloadLinks?.[stream]?.[subjectSlug]?.[year];
+      const filePath = directLink ? directLink : `papers/${stream}/${subjectSlug}/${year}.pdf`;
+      window.open(filePath, "_blank");
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>
